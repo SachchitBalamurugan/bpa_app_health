@@ -48,15 +48,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
               onPressed: () {
                 final weight = double.tryParse(weightController.text);
                 final height = double.tryParse(heightController.text);
-
                 if (weight != null && height != null && height > 0) {
                   setState(() {
                     _bmi = weight / (height * height);
                     pieData = [_bmi, 100 - _bmi];
                   });
+                  print('Calculated BMI: $_bmi'); // Debugging output
                   Navigator.of(context).pop();
                 } else {
-                  // Show error if inputs are invalid
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Please enter valid weight and height values'),
                   ));
@@ -364,7 +363,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Container(
               padding: EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: Color(0xFFF7F8F8),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -481,6 +480,164 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
             ),
+            /////////
+            SizedBox(height: 16),
+            Row(
+              children: [
+                // First Box
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(0.0), // Add margin around the boxes
+                    padding: EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 4,
+                          blurRadius: 6,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Calories',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        ShaderMask(
+                          shaderCallback: (bounds) => LinearGradient(
+                            colors: [Color(0xFF92A3FD), Color(0xFF9DCEFF)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ).createShader(bounds),
+                          child: Text(
+                            '760 kCal',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 24,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white, // Must set this to show gradient
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        // Custom Circular Progress Bar
+                        SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Background Circle
+                              Container(
+                                width: 120,
+                                height: 120,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  gradient: LinearGradient(
+                                    colors: [Color(0xFF92A3FD), Color(0xFF9DCEFF)],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),// Background color
+                                ),
+                              ),
+                              // Gradient Progress Circle
+                              CustomPaint(
+                                size: Size(120, 120),
+                                painter: GradientCircularProgressPainter(
+                                  progress: 0.7, // Adjust progress (0.0 - 1.0)
+                                  gradient: LinearGradient(
+                                    colors: [Color(0xFFC58BF2), Color(0xFFB4C0FE)],
+                                  ),
+                                ),
+                              ),
+                              // Center Text
+                               Text(
+                                  '350 Cal',
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white, // Required to show the gradient
+                                  ),
+                                ),
+
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Second Box
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(8.0), // Add margin around the boxes
+                    padding: EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 4,
+                          blurRadius: 6,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Sleep',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        ShaderMask(
+                          shaderCallback: (bounds) => LinearGradient(
+                            colors: [Color(0xFF92A3FD), Color(0xFF9DCEFF)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ).createShader(bounds),
+                          child: Text(
+                            '8h 20m',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 24,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white, // Must set this to show gradient
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 16), // Space between text and image
+                        Image.asset(
+                          'assets/Sleep-Graph.png', // Replace with your image path
+                          height: 100, // Adjust height as needed
+                          width: 100, // Adjust width as needed
+                          fit: BoxFit.cover, // Adjust fit as needed
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -527,4 +684,42 @@ void main() {
   runApp(MaterialApp(
     home: DashboardScreen(),
   ));
+}
+
+class GradientCircularProgressPainter extends CustomPainter {
+  final double progress;
+  final Gradient gradient;
+
+  GradientCircularProgressPainter({
+    required this.progress,
+    required this.gradient,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Rect rect = Rect.fromLTWH(0, 0, size.width, size.height);
+    final Paint backgroundPaint = Paint()
+      ..color = Color(0xFFF7F8F8)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 8;
+
+    final Paint progressPaint = Paint()
+      ..shader = gradient.createShader(rect)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 8
+      ..strokeCap = StrokeCap.round;
+
+    // Draw background circle
+    canvas.drawCircle(size.center(Offset.zero), size.width / 2, backgroundPaint);
+
+    // Draw progress arc
+    final double startAngle = -90 * (3.14159 / 180); // Start at the top
+    final double sweepAngle = 2 * 3.14159 * progress;
+    canvas.drawArc(rect, startAngle, sweepAngle, false, progressPaint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
+  }
 }
