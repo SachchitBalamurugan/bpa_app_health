@@ -17,7 +17,43 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     _getUserName();
+    _getUserData();
   }
+
+  // Function to get the user's height and weight from Firestore and calculate BMI
+  Future<void> _getUserData() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // Fetch user data from Firestore
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)  // User ID from FirebaseAuth
+          .get();
+
+      if (userDoc.exists) {
+        // Get height and weight values
+        var height = userDoc['height'];
+        var weight = userDoc['weight'];
+
+        // Convert them to double if needed
+        double heightInCm = (height is String ? double.tryParse(height) : (height is int ? height.toDouble() : 0.0)) ?? 0.0;
+        double weightInKg = (weight is String ? double.tryParse(weight) : (weight is int ? weight.toDouble() : 0.0)) ?? 0.0;
+
+        // Calculate BMI if both height and weight are available
+        if (heightInCm > 0 && weightInKg > 0) {
+          setState(() {
+            // Convert height to meters and calculate BMI
+            double heightInM = heightInCm / 100;
+            _bmi = weightInKg / (heightInM * heightInM);
+          });
+        }
+      } else {
+        print('User document not found!');
+      }
+    }
+  }
+
+
 
   // Function to get the user's name from Firestore
   Future<void> _getUserName() async {
@@ -82,53 +118,85 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Calculate BMI'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: weightController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Weight (kg)'),
+        builder: (context) {
+          // card weight and height
+          return AlertDialog(
+            title: Text('Update'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: weightController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: 'Weight (kg)'),
+                ),
+                TextField(
+                  controller: heightController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(labelText: 'Height (cm)'),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Cancel'),
               ),
-              TextField(
-                controller: heightController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Height (m)'),
+              ElevatedButton(
+                onPressed: () async {
+                  // Parse the weight and height values
+                  double? weight = double.tryParse(weightController.text);
+                  double? height = double.tryParse(heightController.text);
+
+                  if (weight != null && height != null && height > 0) {
+                    // Update Firestore with the new values
+                    User? user = FirebaseAuth.instance.currentUser;
+                    if (user != null) {
+                      try {
+                        // Update height and weight under the user's document
+                        await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(user.uid) // Use the logged-in user's ID
+                            .update({
+                          'weight': weight,
+                          'height': height,
+                        });
+
+                        // Calculate BMI
+                        double heightInM = height / 100; // Convert cm to meters
+                        double bmi = weight / (heightInM * heightInM);
+
+                        setState(() {
+                          _bmi = bmi; // Update BMI value
+                        });
+
+                        Navigator.of(context).pop(); // Close the dialog
+                      } catch (e) {
+                        // Handle error while updating Firestore
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Failed to update information: $e'),
+                        ));
+                      }
+                    } else {
+                      // User is not logged in
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('You must be logged in to update information.'),
+                      ));
+                      Navigator.of(context).pop(); // Close the dialog if not logged in
+                    }
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Please enter valid weight and height values'),
+                    ));
+                  }
+                },
+                child: Text('Update'),
               ),
             ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final weight = double.tryParse(weightController.text);
-                final height = double.tryParse(heightController.text);
-                if (weight != null && height != null && height > 0) {
-                  setState(() {
-                    _bmi = weight / (height * height);
-                    pieData = [_bmi, 100 - _bmi];
-                  });
-                  print('Calculated BMI: $_bmi'); // Debugging output
-                  Navigator.of(context).pop();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Please enter valid weight and height values'),
-                  ));
-                }
-              },
-              child: Text('Calculate'),
-            ),
-          ],
-        );
-      },
+          );
+        },
     );
   }
 
@@ -231,7 +299,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                                 child: Text(
-                                  'Update Value',
+                                  'Update Weight and Height',
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: Colors.white,
@@ -248,7 +316,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         radius: 40,
                         backgroundColor: Colors.white,
                         child: Text(
-                          _bmi.toStringAsFixed(1),
+                          _bmi > 0 ? _bmi.toStringAsFixed(1) : 'Loading...', // Display BMI or loading
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
