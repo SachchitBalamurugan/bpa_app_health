@@ -37,6 +37,9 @@ dependencies:
   heart_bpm: ^2.0.0+0
   camera: ^0.10.6
   google_fonts: ^6.2.1
+  firebase_core: ^3.9.0
+  firebase_auth: ^5.3.4
+  cloud_firestore: ^5.6.0
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +62,8 @@ flutter:
   assets:
     - assets/Sleep-Graph.png
     - assets/gym.png
+    - assets/Frame (2).png
+    - assets/
 
   fonts:
     - family: Poppins

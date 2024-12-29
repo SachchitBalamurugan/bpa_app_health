@@ -58,6 +58,37 @@ class _AddGoalsScreenState extends State<AddGoalsScreen> {
     });
   }
 
+  // Custom goals
+  final Map<String, Map<String, double>> customGoals = {};
+  final TextEditingController customGoalController = TextEditingController();
+  final TextEditingController subGoalNameController = TextEditingController();
+  final TextEditingController subGoalValueController = TextEditingController();
+
+  void addCustomGoal() {
+    String customGoal = customGoalController.text.trim();
+    if (customGoal.isNotEmpty) {
+      setState(() {
+        customGoals[customGoal] = {};
+      });
+      customGoalController.clear();
+    }
+  }
+
+  void addSubGoal(String customGoal) {
+    String subGoalName = subGoalNameController.text.trim();
+    double subGoalValue =
+        double.tryParse(subGoalValueController.text.trim()) ?? 0.0;
+
+    if (subGoalName.isNotEmpty && subGoalValue > 0) {
+      setState(() {
+        customGoals[customGoal]?[subGoalName] = subGoalValue;
+        progress[subGoalName] = 0.0;
+      });
+      subGoalNameController.clear();
+      subGoalValueController.clear();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -104,15 +135,17 @@ class _AddGoalsScreenState extends State<AddGoalsScreen> {
               height: 200,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: goals.keys.length,
+                itemCount: goals.keys.length + customGoals.keys.length,
                 itemBuilder: (context, index) {
-                  String goal = goals.keys.elementAt(index);
+                  String goal = index < goals.keys.length
+                      ? goals.keys.elementAt(index)
+                      : customGoals.keys.elementAt(index - goals.keys.length);
                   return GestureDetector(
                     onTap: () {
                       setState(() {
                         selectedGoal = goal;
                         progress.clear();
-                        goals[selectedGoal]?.forEach((key, value) {
+                        (goals[goal] ?? customGoals[goal])?.forEach((key, value) {
                           progress[key] = 0.0;
                         });
                       });
@@ -181,8 +214,11 @@ class _AddGoalsScreenState extends State<AddGoalsScreen> {
                       SizedBox(height: 10),
 
                       // Create progress bars for each sub-goal
-                      ...goals[selectedGoal]!.keys.map((subGoal) {
-                        double goalValue = goals[selectedGoal]![subGoal]!;
+                      ...((goals[selectedGoal] ?? customGoals[selectedGoal])!
+                          .keys
+                          .map((subGoal) {
+                        double goalValue = (goals[selectedGoal] ??
+                            customGoals[selectedGoal])![subGoal]!;
                         double currentProgress = progress[subGoal] ?? 0.0;
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,11 +248,82 @@ class _AddGoalsScreenState extends State<AddGoalsScreen> {
                             SizedBox(height: 10),
                           ],
                         );
-                      }).toList(),
+                      }).toList()),
                     ],
                   ),
                 ),
               ),
+            SizedBox(height: 20),
+
+            // Add custom goal section
+            Card(
+              color: Colors.white,
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: customGoalController,
+                      decoration: InputDecoration(
+                        labelText: 'Enter Custom Goal Name',
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: addCustomGoal,
+                      child: Text('Add Custom Goal'),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Color(0xFFC58BF2),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    if (customGoals.isNotEmpty)
+                      ...customGoals.keys.map((customGoal) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              customGoal,
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 10),
+                            TextField(
+                              controller: subGoalNameController,
+                              decoration: InputDecoration(
+                                labelText: 'Enter Sub-Goal Name',
+                              ),
+                            ),
+                            TextField(
+                              controller: subGoalValueController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: 'Enter Sub-Goal Target Value',
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            ElevatedButton(
+                              onPressed: () => addSubGoal(customGoal),
+                              child: Text('Add Sub-Goal'),
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: Color(0xFFC58BF2),
+                              ),
+                            ),
+                            Divider(),
+                          ],
+                        );
+                      }).toList(),
+                  ],
+                ),
+              ),
+            ),
             SizedBox(height: 40),
             ElevatedButton(
               onPressed: () {

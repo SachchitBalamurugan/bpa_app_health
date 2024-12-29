@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthapp/screens/goals.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../components/heart_rate.dart';
-import '../components/water_component.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -10,7 +11,38 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  String userName = '';  // Store the user name here
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserName();
+  }
+
+  // Function to get the user's name from Firestore
+  Future<void> _getUserName() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // Fetch user data from Firestore
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)  // User ID from FirebaseAuth
+          .get();
+
+      if (userDoc.exists) {
+        setState(() {
+          userName = userDoc['name'] ?? 'No name available';
+        });
+      } else {
+        print('User document not found!');
+      }
+    }
+  }
+
   int _selectedIndex = 0;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+
 
   // Function to handle navigation between screens
   void _onItemTapped(int index) {
@@ -128,13 +160,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
             // Name in a new line, bigger and bold
-            Text(
-              'Stefani Wong',
-              style: GoogleFonts.poppins(
-                fontSize: 28, // Bigger size
-                fontWeight: FontWeight.bold, // Bold weight
-              ),
-            ),
+        Text(
+          userName.isNotEmpty ? userName : 'Loading...',
+          style: GoogleFonts.poppins(
+            fontSize: 28, // Bigger size
+            fontWeight: FontWeight.bold, // Bold weight
+          ),
+        ),
 
             SizedBox(height: 16),
 
@@ -199,7 +231,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                                 child: Text(
-                                  'View More',
+                                  'Update Value',
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: Colors.white,
@@ -339,7 +371,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       elevation: 0, // Optional: Remove shadow for a flat look
                     ),
                     onPressed: () {
-                      // Add your button action here
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => AddGoalsScreen()),
+                      );
                     },
                     child: Ink(
                       decoration: BoxDecoration(

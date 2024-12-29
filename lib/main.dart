@@ -1,9 +1,14 @@
+import 'package:healthapp/start/start.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:healthapp/screens/home.dart';
+import 'firebase_options.dart'; // Generated Firebase options
 
-import 'components/water_component.dart';
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
-void main() {
   runApp(const MyApp());
 }
 
@@ -19,7 +24,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
-      home: DashboardScreen(),
+      home: SoulSyncScreen(),
     );
   }
 }

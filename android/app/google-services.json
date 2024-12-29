@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "393702954365",
+    "project_id": "soulsynchealth",
+    "storage_bucket": "soulsynchealth.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:393702954365:android:7ca6daefb00a169ffee814",
+        "android_client_info": {
+          "package_name": "com.example.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0kShEQN-lX20FmLrYbNztHwzyeHZ0nGU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
