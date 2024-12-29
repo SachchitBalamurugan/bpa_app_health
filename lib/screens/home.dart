@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:healthapp/screens/goals.dart';
 import '../components/heart_rate.dart';
 import '../components/water_component.dart';
 
@@ -9,6 +10,36 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  int _selectedIndex = 0;
+
+  // Function to handle navigation between screens
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    // Navigate to the corresponding screen based on index
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DashboardScreen()),
+        );
+        break;
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => AddGoalsScreen()),
+        );
+        break;
+      // case 2:
+      //   Navigator.pushReplacement(
+      //     context,
+      //     MaterialPageRoute(builder: (context) => ProfileScreen()),
+      //   );
+      //   break;
+    }
+  }
+
   double _bmi = 0; // Initial BMI value
   List<double> pieData = [20.1, 79.9]; // Placeholder pie data for BMI
   int _currentWaterIntake = 0; // Current water intake in milliliters
@@ -642,6 +673,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped, // Call _onItemTapped when an item is tapped
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

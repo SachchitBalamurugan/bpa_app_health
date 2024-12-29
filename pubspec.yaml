@@ -58,6 +58,7 @@ flutter:
 
   assets:
     - assets/Sleep-Graph.png
+    - assets/gym.png
 
   fonts:
     - family: Poppins
