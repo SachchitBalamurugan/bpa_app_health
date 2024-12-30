@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:healthapp/screens/goals.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:healthapp/screens/sleep.dart';
 import '../components/heart_rate.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -96,7 +97,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       case 1:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => AddGoalsScreen()),
+          MaterialPageRoute(builder: (context) => Sleep()),
         );
         break;
       // case 2:

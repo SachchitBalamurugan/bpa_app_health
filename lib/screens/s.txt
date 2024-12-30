@@ -1,357 +1,79 @@
-child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Adjust Add Goals",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black, // Adjust if needed
-                    ),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: Size(32, 32), // Smaller button size
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      elevation: 0, // Optional: Remove shadow for a flat look
-                    ),
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => AddGoalsScreen()),
-                      );
-                    },
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xFF92A3FD), Color(0xFF9DCEFF)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        child: Text(
-                          'Adjust/Add',
-                          style: TextStyle(
-                            fontSize: 12, // Smaller text size
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            SizedBox(height: 16),
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFFEBF3FF), Color(0xFFE9EDFF)], // Gradient colors
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.3), // Shadow color with transparency
-                spreadRadius: 2, // How far the shadow spreads
-                blurRadius: 6, // The softness of the shadow
-                offset: Offset(0, 3), // Position of the shadow (x, y)
-              ),
-            ],
-          ),
-          padding: EdgeInsets.all(16),
-          child: HeartBPMComponent(), // The original component inside the container
-        ),
-            //water
-            SizedBox(height: 16),
-            // Water Intake Tracker
-            Container(
-              padding: EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 2,
-                    blurRadius: 6,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Vertical Progress Bar
-                  Stack(
-                    alignment: Alignment.bottomCenter, // Ensure the fill starts from the bottom
+Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                color: Colors.transparent,
+                elevation: 8, // Shadow intensity
+                shadowColor: Colors.black.withOpacity(0.2), // Shadow color with transparency
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
                     children: [
-                      Container(
-                        width: 20,
-                        height: 300, // Increase the height of the bar
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.grey[300],
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'BMI (Body Mass Index)',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white, // Set text color to white
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Your calculated BMI is below:',
+                            style: TextStyle(
+                              color: Colors.white, // Set text color to white
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              elevation: 0,
+                            ),
+                            onPressed: _showBmiCalculator,
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [Color(0xFFC58BF2), Color(0xFFEEA4CE)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                child: Text(
+                                  'Update Weight and Height',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      Container(
-                        width: 20,
-                        height: (_currentWaterIntake / _dailyWaterGoal) * 300, // Dynamic height calculation
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          gradient: LinearGradient(
-                            colors: [Color(0xFFC58BF2), Color(0xFFB4C0FE)],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
+                      Spacer(),
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.white,
+                        child: Text(
+                          _bmi > 0 ? _bmi.toStringAsFixed(1) : 'Loading...', // Display BMI or loading
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(width: 16),
-                  // Text Section
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Water Intake',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Poppins', // Set Poppins font
-                            color: Colors.black87,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          '4 Liters',
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Poppins', // Set Poppins font
-                            foreground: Paint()
-                              ..shader = LinearGradient(
-                                colors: [Color(0xFF92A3FD), Color(0xFF9DCEFF)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ).createShader(Rect.fromLTWH(0, 0, 200, 70)),
-                          ),
-                        ),
-                        SizedBox(height: 16),
-                        Text(
-                          'Real-time updates',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Poppins', // Set Poppins font
-                            color: Colors.black54,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildUpdateRow('6am - 8am', '600ml'),
-                            _buildUpdateRow('9am - 11am', '500ml'),
-                            _buildUpdateRow('11am - 2pm', '1000ml'),
-                            _buildUpdateRow('2pm - 4pm', '700ml'),
-                            _buildUpdateRow('4pm - now', '900ml'),
-                          ],
-                        ),
-                        SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () => _addWaterIntake(200),
-                              child: Text(
-                                '+200 ml',
-                                style: TextStyle(fontFamily: 'Poppins'), // Set Poppins font
-                              ),
-                            ),
-                            ElevatedButton(
-                              onPressed: () => _addWaterIntake(500),
-                              child: Text(
-                                '+500 ml',
-                                style: TextStyle(fontFamily: 'Poppins'), // Set Poppins font
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-            /////////
-            SizedBox(height: 16),
-            Row(
-              children: [
-                // First Box
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.all(0.0), // Add margin around the boxes
-                    padding: EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          spreadRadius: 4,
-                          blurRadius: 6,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Calories',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 16,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        ShaderMask(
-                          shaderCallback: (bounds) => LinearGradient(
-                            colors: [Color(0xFF92A3FD), Color(0xFF9DCEFF)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ).createShader(bounds),
-                          child: Text(
-                            '760 kCal',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 24,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white, // Must set this to show gradient
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 16),
-                        // Custom Circular Progress Bar
-                        SizedBox(
-                          width: 100,
-                          height: 100,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              // Background Circle
-                              Container(
-                                width: 120,
-                                height: 120,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: LinearGradient(
-                                    colors: [Color(0xFF92A3FD), Color(0xFF9DCEFF)],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),// Background color
-                                ),
-                              ),
-                              // Gradient Progress Circle
-                              CustomPaint(
-                                size: Size(120, 120),
-                                painter: GradientCircularProgressPainter(
-                                  progress: 0.7, // Adjust progress (0.0 - 1.0)
-                                  gradient: LinearGradient(
-                                    colors: [Color(0xFFC58BF2), Color(0xFFB4C0FE)],
-                                  ),
-                                ),
-                              ),
-                              // Center Text
-                               Text(
-                                  '350 Cal',
-                                  style: TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.white, // Required to show the gradient
-                                  ),
-                                ),
-
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                // Second Box
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.all(8.0), // Add margin around the boxes
-                    padding: EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          spreadRadius: 4,
-                          blurRadius: 6,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Sleep',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 16,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        ShaderMask(
-                          shaderCallback: (bounds) => LinearGradient(
-                            colors: [Color(0xFF92A3FD), Color(0xFF9DCEFF)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ).createShader(bounds),
-                          child: Text(
-                            '8h 20m',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 24,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white, // Must set this to show gradient
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 16), // Space between text and image
-                        Image.asset(
-                          'assets/Sleep-Graph.png', // Replace with your image path
-                          height: 100, // Adjust height as needed
-                          width: 100, // Adjust width as needed
-                          fit: BoxFit.cover, // Adjust fit as needed
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
