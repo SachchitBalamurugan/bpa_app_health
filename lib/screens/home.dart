@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:healthapp/screens/activity.dart';
+import 'package:healthapp/screens/calendar.dart';
 import 'package:healthapp/screens/goals.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -100,12 +102,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
           MaterialPageRoute(builder: (context) => Sleep()),
         );
         break;
-      // case 2:
-      //   Navigator.pushReplacement(
-      //     context,
-      //     MaterialPageRoute(builder: (context) => ProfileScreen()),
-      //   );
-      //   break;
+      case 2:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => WorkoutTrackerApp()),
+        );
+        break;
+      case 3:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => WorkoutScheduleScreen()),
+        );
+        break;
     }
   }
 
@@ -778,7 +786,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped, // Call _onItemTapped when an item is tapped
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.blueAccent, // Neon blue color for selected items
+        unselectedItemColor: Colors.blueGrey, // BlueGrey for unselected items
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -791,6 +801,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_month),
+            label: 'Calendar',
           ),
         ],
       ),
