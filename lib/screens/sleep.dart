@@ -528,7 +528,9 @@ class _SleepState extends State<Sleep> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped, // Call _onItemTapped when an item is tapped
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.blueAccent, // Neon blue color for selected items
+        unselectedItemColor: Colors.blueGrey, // BlueGrey for unselected items
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

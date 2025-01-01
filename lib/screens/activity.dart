@@ -273,8 +273,10 @@ class _WorkoutTrackerScreenState extends State<WorkoutTrackerScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped, // Call _onItemTapped when an item is tapped
-        items: const [
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.blueAccent, // Neon blue color for selected items
+        unselectedItemColor: Colors.blueGrey, // BlueGrey for unselected items
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',

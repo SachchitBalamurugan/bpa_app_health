@@ -27,6 +27,43 @@ class WorkoutScreen extends StatefulWidget {
 }
 
 class _WorkoutScreenState extends State<WorkoutScreen> {
+  void _markCompleted() async {
+    // Get the current user
+    final User? user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('User not logged in.')),
+      );
+      return;
+    }
+
+    final String userId = user.uid;
+
+    try {
+      // Mark workout as completed and update the timestamp
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('complete')
+          .add({
+        'completed': true,
+        'timestamp': FieldValue.serverTimestamp(),
+        'caloriesBurned': 250, // Calories burned
+        'minutesWorkedOut': 25, // Minutes worked out
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Workout marked as completed!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to mark completed: $e')),
+      );
+      print('Error marking workout as completed: $e'); // Log the error here
+    }
+  }
+
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
 
@@ -235,8 +272,19 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 ],
               ),
             ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _markCompleted,
+              child: Text('Completed'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+              ),
+            ),
           ],
+
         ),
+
       ),
     );
   }
