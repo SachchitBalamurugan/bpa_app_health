@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:healthapp/screens/activity.dart';
 import 'package:healthapp/screens/calendar.dart';
+import 'package:healthapp/screens/food.dart';
 import 'package:healthapp/screens/goals.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -112,6 +113,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => WorkoutScheduleScreen()),
+        );
+        break;
+      case 4:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Food()),
         );
         break;
     }
@@ -805,6 +812,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_month),
             label: 'Calendar',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_month),
+            label: 'Food',
           ),
         ],
       ),
